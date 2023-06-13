@@ -1,3 +1,3 @@
 # test-repo3
-test commit6
+test commit
 
