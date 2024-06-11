@@ -1,0 +1,40 @@
+resources:
+- name: test-repo
+  type: git
+  webhook_token: "123"
+  source:
+    uri: https://github.com/vlad-kravets/test-repo3.git
+    branch: main
+
+jobs:
+- name: test
+  plan:
+  - get: test-repo
+    trigger: true
+
+  - task: build
+    privileged: true
+    config:
+      platform: linux
+
+      image_resource:
+        type: registry-image
+        source:
+          repository: us.gcr.io/res-nbcupea-mgmt-003/concourse-tooling-oci-build-task
+          username: _json_key
+          password: ((gcp-json-key-gcr-reader-res-nbcupea-mgmt-003))
+
+      inputs:
+      - name: test-repo
+
+      params:
+        CONTEXT: test-repo
+
+      run:
+        path: sh
+        dir: test-repo
+        args:
+          - -ecx
+          - |
+            echo "doing nothing.." && date
+
